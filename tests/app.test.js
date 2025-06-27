@@ -1,4 +1,4 @@
-const request = require('supertest');
+const request = require('jest');
 const express = require('express');
 const path = require('path');
 
