@@ -1,0 +1,39 @@
+name: CI e Continuous Delivery
+
+on:
+  push:
+    branches: [ develop ]
+  workflow_dispatch:
+
+jobs:
+  build-e-deliver:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do Repositório
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Instalar Dependências
+        run: npm install
+
+      - name: Rodar Análise de Código Estático (ESLint)
+        run: npm run lint
+
+      - name: Rodar Testes de Unidade e Cobertura
+        run: npm test
+      
+      - name: Fazer Merge para a Main (Continuous Delivery)
+        if: success() # Só executa se os passos anteriores foram bem sucedidos
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git checkout main
+          git pull origin main
+          git merge develop --no-ff -m "Merge da branch develop para main"
+          git push https://${{ secrets.ACCESSS_TOKEN }}@github.com/${{ github.repository }} main
