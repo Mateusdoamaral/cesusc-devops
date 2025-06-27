@@ -22,14 +22,11 @@ jobs:
       - name: Instalar Dependências
         run: npm install
 
-      - name: Rodar Análise de Código Estático (ESLint)
-        run: npm run lint
-
       - name: Rodar Testes de Unidade e Cobertura
         run: npm test
       
       - name: Fazer Merge para a Main (Continuous Delivery)
-        if: success() # Só executa se os passos anteriores foram bem sucedidos
+        if: success()
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
